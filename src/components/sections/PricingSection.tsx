@@ -800,9 +800,9 @@ export default function PricingCarouselSection() {
         </p>
       </div>
 
-      <style jsx global>{`
+      {/* <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
-      `}</style>
+      `}</style> */}
     </section>
   );
 }

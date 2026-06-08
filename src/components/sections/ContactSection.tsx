@@ -535,7 +535,13 @@ export default function ContactSection() {
                           width={8}
                           height={8}
                           rx={1}
-                          fill={inCorner ? "#1F2937" : Math.random() > 0.5 ? "#374151" : "transparent"}
+                          fill={
+                            inCorner
+                              ? "#1F2937"
+                              : (r * 7 + c * 3) % 3 === 0
+                                ? "#374151"
+                                : "transparent"
+                          }
                         />
                       );
                     })
