@@ -208,7 +208,9 @@ export default function ApiSection() {
               </div>
 
               <div className="p-5 font-mono text-xs leading-relaxed bg-white">
-                <div><span className="text-gray-400">// Send WhatsApp message via Greenping API</span></div>
+                <div><span className="text-gray-400">
+                  {/* // Send WhatsApp message via Greenping API */}
+                </span></div>
                 <div className="mt-2">
                   <span className="text-purple-600">const</span>
                   <span className="text-gray-800"> response </span>
@@ -232,7 +234,9 @@ export default function ApiSection() {
                 <div className="pl-4"><span className="text-gray-400">{"}"}</span></div>
                 <div className="text-gray-400">);</div>
                 <div className="mt-3 p-3 rounded-lg bg-gradient-to-r from-green-50 to-teal-50 border border-green-200">
-                  <span className="text-gray-400">// Response: </span>
+                  <span className="text-gray-400">
+                    {/* // Response: */}
+                  </span>
                   <span className="text-green-600">{"{ "}</span>
                   <span className="text-purple-600">status</span>
                   <span className="text-gray-800">: </span>
@@ -271,7 +275,7 @@ export default function ApiSection() {
               <p className="text-gray-500 text-lg leading-relaxed">
                 Our platform leverages the official WhatsApp Cloud API to provide
                 businesses with a powerful, reliable, and compliant communication
-                solution — connecting you to the world's most popular messaging app.
+                solution — connecting you to the world&apos;s most popular messaging app.
               </p>
             </div>
 
