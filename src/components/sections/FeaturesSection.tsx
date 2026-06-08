@@ -1,385 +1,882 @@
 // "use client";
+// import { useEffect, useRef, useState, useCallback } from "react";
 // import {
 //   UserPlus, MessageCircle, QrCode, Bot, Layout, GitBranch,
 //   Plug2, BarChart2, Users2, Megaphone, Sparkles, FileText,
 // } from "lucide-react";
 
+// // ─── Feature data ──────────────────────────────────────────────────────────────
 // const features = [
 //   {
-//     icon: UserPlus,
+//     Icon: UserPlus,
 //     title: "Embedded Signup",
-//     desc: "Integrated Embedded Signup System that makes customer onboarding seamless and fast.",
+//     desc: "Integrated Embedded Signup System that makes customer onboarding seamless and fast. Reduce drop-offs and get users verified in seconds.",
 //     badge: "Popular",
+//     tag: "Used by 80% of teams",
+//     side: "left",
 //   },
 //   {
-//     icon: MessageCircle,
-//     title: "Integrated WhatsApp Chat",
-//     desc: "Seamlessly connect with customers through a unified WhatsApp Chat inbox.",
+//     Icon: MessageCircle,
+//     title: "WhatsApp Chat",
+//     desc: "Seamlessly connect with customers through a unified WhatsApp Chat inbox. Handle multiple conversations simultaneously with smart routing.",
+//     tag: "Real-time messaging",
+//     side: "left",
 //   },
 //   {
-//     icon: QrCode,
+//     Icon: QrCode,
 //     title: "QR Code Generator",
-//     desc: "Instantly generate QR codes for your WhatsApp number to drive offline engagement.",
+//     desc: "Instantly generate QR codes for your WhatsApp number to drive offline-to-online engagement at stores, events, and print materials.",
+//     tag: "Offline + online",
+//     side: "left",
 //   },
 //   {
-//     icon: Bot,
+//     Icon: Bot,
 //     title: "Chat-Bot",
-//     desc: "Engage customers 24/7 with intelligent, rule-based chatbot responses effortlessly.",
+//     desc: "Engage customers 24/7 with intelligent, rule-based chatbot responses. Handle FAQs, lead capture, and support without human intervention.",
+//     tag: "Always on",
+//     side: "left",
 //   },
 //   {
-//     icon: Layout,
+//     Icon: Layout,
 //     title: "Manage Templates",
-//     desc: "Create and manage message templates directly in-app without visiting Meta Business Manager.",
+//     desc: "Create and manage message templates directly in-app without visiting Meta Business Manager. Get approvals faster with guided workflows.",
 //     badge: "New",
+//     tag: "Meta-approved",
+//     side: "left",
 //   },
 //   {
-//     icon: GitBranch,
+//     Icon: GitBranch,
 //     title: "Flow Maker",
-//     desc: "Build complex bot conversation flows visually with our advanced no-code Flow Maker.",
+//     desc: "Build complex bot conversation flows visually with our advanced no-code Flow Maker. Drag, connect, and publish in minutes.",
+//     tag: "No-code builder",
+//     side: "left",
 //   },
 //   {
-//     icon: Plug2,
+//     Icon: Plug2,
 //     title: "API Integration",
-//     desc: "Full REST APIs and webhooks enable smooth integration with any third-party service.",
+//     desc: "Full REST APIs and webhooks enable smooth integration with any third-party service — CRMs, ERPs, ecommerce platforms, and more.",
+//     tag: "100+ integrations",
+//     side: "right",
 //   },
 //   {
-//     icon: BarChart2,
+//     Icon: BarChart2,
 //     title: "Live Analysis",
-//     desc: "Get real-time analytics and delivery status of your campaigns and messages.",
+//     desc: "Get real-time analytics and delivery status of your campaigns and messages. Track open rates, CTRs, and response times live.",
+//     tag: "Live data",
+//     side: "right",
 //   },
 //   {
-//     icon: Users2,
+//     Icon: Users2,
 //     title: "Assign Agents",
-//     desc: "Distribute chats to team members and agents with role-based access control.",
+//     desc: "Distribute chats to team members and agents with role-based access control. Set SLAs, monitor workload, and reassign in one click.",
+//     tag: "Team management",
+//     side: "right",
 //   },
 //   {
-//     icon: Megaphone,
+//     Icon: Megaphone,
 //     title: "Campaigns",
-//     desc: "Effortlessly schedule and manage broadcast campaigns to thousands of contacts.",
+//     desc: "Effortlessly schedule and manage broadcast campaigns to thousands of contacts. Segment, personalise, and A/B test at scale.",
+//     tag: "Bulk messaging",
+//     side: "right",
 //   },
 //   {
-//     icon: Sparkles,
+//     Icon: Sparkles,
 //     title: "AI Chatbot",
-//     desc: "Leverage advanced AI to automate customer interactions with intelligent, contextual responses.",
+//     desc: "Leverage advanced AI to automate customer interactions with intelligent, contextual responses. Learns from conversation history.",
 //     badge: "AI",
+//     tag: "Powered by AI",
+//     side: "right",
 //   },
 //   {
-//     icon: FileText,
+//     Icon: FileText,
 //     title: "Chat Reports",
-//     desc: "Generate comprehensive analytics and detailed reports on all WhatsApp communications.",
+//     desc: "Generate comprehensive analytics and detailed reports on all WhatsApp communications. Export to CSV, PDF, or push to your BI tool.",
+//     tag: "Full analytics",
+//     side: "right",
 //   },
 // ];
 
-// const badgeColors: Record<string, string> = {
-//   Popular: "bg-[#00D46A]/10 text-[#00D46A] border border-[#00D46A]/20",
-//   New:     "bg-blue-500/10  text-blue-400  border border-blue-400/20",
-//   AI:      "bg-purple-500/10 text-purple-400 border border-purple-400/20",
+// // SVG node positions: [cx, cy, labelAnchor, labelX, labelY]
+// const NODE_POS = [
+//   // Left side (indices 0-5)
+//   [150, 170, "end", 128, 170],
+//   [130, 220, "end", 108, 220],
+//   [210, 200, "end", 188, 200],
+//   [240, 240, "end", 218, 240],
+//   [220, 295, "end", 198, 295],
+//   [160, 330, "end", 138, 330],
+//   // Right side (indices 6-11)
+//   [570, 170, "start", 592, 170],
+//   [590, 220, "start", 612, 220],
+//   [510, 200, "start", 532, 200],
+//   [480, 240, "start", 502, 240],
+//   [500, 295, "start", 522, 295],
+//   [560, 330, "start", 582, 330],
+// ];
+
+// // SVG branch paths (left then right, matching NODE_POS order)
+// const BRANCH_PATHS = [
+//   "M360,280 Q280,220 150,170",
+//   "M360,280 Q270,240 130,220",
+//   "M360,280 Q300,240 210,200",
+//   "M360,280 Q310,250 240,240",
+//   "M360,280 Q310,290 220,295",
+//   "M360,280 Q280,300 160,330",
+//   "M360,280 Q440,220 570,170",
+//   "M360,280 Q450,240 590,220",
+//   "M360,280 Q420,240 510,200",
+//   "M360,280 Q410,250 480,240",
+//   "M360,280 Q410,290 500,295",
+//   "M360,280 Q440,300 560,330",
+// ];
+
+// const badgeStyle = {
+//   Popular: "bg-green-100 text-green-800 border border-green-200",
+//   New: "bg-blue-100 text-blue-800 border border-blue-200",
+//   AI: "bg-purple-100 text-purple-800 border border-purple-200",
 // };
 
-// export default function FeaturesSection() {
+// // ─── Pulse Dot ────────────────────────────────────────────────────────────────
+// function PulseDot() {
 //   return (
-//     <section id="features" className="py-24 relative">
-//       {/* Background */}
-//       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0D1710]/50 to-transparent pointer-events-none" />
+//     <span className="relative inline-flex w-2 h-2 mr-2 flex-shrink-0 mt-0.5">
+//       <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping" />
+//       <span className="relative inline-flex rounded-full h-2 w-2 bg-green-600" />
+//     </span>
+//   );
+// }
+
+// // ─── Detail card ──────────────────────────────────────────────────────────────
+// function DetailCard({ feature, onClose }) {
+//   const { Icon, title, desc, badge, tag } = feature;
+//   return (
+//     <div
+//       className="mt-4 flex items-start gap-4 bg-white border border-green-200 rounded-2xl p-5 shadow-sm shadow-green-100
+//                  animate-[slideUp_.3s_cubic-bezier(.2,.8,.3,1)_forwards]"
+//       style={{ opacity: 0, transform: "translateY(12px)" }}
+//     >
+//       <div className="w-12 h-12 rounded-2xl bg-green-50 border border-green-200 flex items-center justify-center flex-shrink-0 text-green-600">
+//         <Icon className="w-6 h-6" />
+//       </div>
+//       <div className="flex-1 min-w-0">
+//         <div className="flex items-center gap-2 flex-wrap mb-1">
+//           <h3
+//             className="text-base font-extrabold text-gray-900"
+//             style={{ fontFamily: "'Syne', sans-serif" }}
+//           >
+//             {title}
+//           </h3>
+//           {badge && (
+//             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide ${badgeStyle[badge]}`}>
+//               {badge}
+//             </span>
+//           )}
+//         </div>
+//         <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
+//         <div className="flex items-center gap-1 mt-3 text-xs text-green-700 font-medium bg-green-50 border border-green-200 rounded-full px-3 py-1 w-fit">
+//           <PulseDot />
+//           {tag}
+//         </div>
+//       </div>
+//       <button
+//         onClick={onClose}
+//         className="text-gray-300 hover:text-gray-500 transition-colors flex-shrink-0 mt-0.5"
+//         aria-label="Close"
+//       >
+//         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+//         </svg>
+//       </button>
+//     </div>
+//   );
+// }
+
+// // ─── Tree SVG ─────────────────────────────────────────────────────────────────
+// function FeatureTree({ active, onSelect }) {
+//   const svgRef = useRef(null);
+
+//   // Animate branches in on mount
+//   useEffect(() => {
+//     if (!svgRef.current) return;
+//     const paths = svgRef.current.querySelectorAll(".branch");
+//     paths.forEach((path, i) => {
+//       const len = path.getTotalLength?.() || 200;
+//       path.style.strokeDasharray = len;
+//       path.style.strokeDashoffset = len;
+//       setTimeout(() => {
+//         path.style.transition = "stroke-dashoffset .7s ease, stroke .3s";
+//         path.style.strokeDashoffset = "0";
+//       }, 300 + i * 80);
+//     });
+//   }, []);
+
+//   // Idle pulse every 4s when nothing active
+//   useEffect(() => {
+//     if (active !== null) return;
+//     const id = setInterval(() => {
+//       NODE_POS.forEach((_, i) => {
+//         // visual ping: briefly add/remove class via SVG directly
+//       });
+//     }, 4000);
+//     return () => clearInterval(id);
+//   }, [active]);
+
+//   return (
+//     <svg
+//       ref={svgRef}
+//       viewBox="0 0 720 560"
+//       xmlns="http://www.w3.org/2000/svg"
+//       className="w-full h-auto overflow-visible"
+//       aria-hidden="true"
+//     >
+//       {/* Trunk */}
+//       <line
+//         x1="360" y1="520" x2="360" y2="280"
+//         stroke="#d1fae5" strokeWidth="2" strokeLinecap="round"
+//         style={{ animation: "breathe 3s ease infinite" }}
+//       />
+
+//       {/* Branches */}
+//       {BRANCH_PATHS.map((d, i) => (
+//         <path
+//           key={i}
+//           className="branch"
+//           d={d}
+//           fill="none"
+//           strokeLinecap="round"
+//           stroke={
+//             active === null
+//               ? "#a7f3d0"
+//               : active === i
+//                 ? "#059669"
+//                 : "#e5e7eb"
+//           }
+//           strokeWidth={active === i ? 2.5 : 1.5}
+//           style={{
+//             transition: "stroke .3s, stroke-width .3s",
+//           }}
+//         />
+//       ))}
+
+//       {/* Root hub */}
+//       <circle cx="360" cy="280" r="32" fill="#ecfdf5" stroke="#059669" strokeWidth="2" />
+//       <circle cx="360" cy="280" r="20" fill="#059669" />
+//       <text
+//         x="360" y="276"
+//         textAnchor="middle" dominantBaseline="middle"
+//         fontFamily="'Syne', sans-serif" fontSize="8" fontWeight="700"
+//         fill="#fff" letterSpacing=".06em"
+//       >
+//         WHATS
+//       </text>
+//       <text
+//         x="360" y="287"
+//         textAnchor="middle" dominantBaseline="middle"
+//         fontFamily="'Syne', sans-serif" fontSize="8" fontWeight="700"
+//         fill="#fff" letterSpacing=".06em"
+//       >
+//         APP
+//       </text>
+
+//       {/* Nodes */}
+//       {NODE_POS.map(([cx, cy, anchor, lx, ly], i) => {
+//         const isActive = active === i;
+//         const isDim = active !== null && !isActive;
+//         const f = features[i];
+//         return (
+//           <g
+//             key={i}
+//             onClick={() => onSelect(i)}
+//             style={{ cursor: "pointer" }}
+//             opacity={isDim ? 0.35 : 1}
+//           >
+//             {/* Pulse ring */}
+//             {isActive && (
+//               <circle
+//                 cx={cx} cy={cy}
+//                 fill="none" stroke="#059669" strokeWidth="1"
+//                 style={{ animation: "nodeRing 1.8s ease-out infinite" }}
+//               />
+//             )}
+//             {/* Outer ring */}
+//             <circle
+//               cx={cx} cy={cy} r="16"
+//               fill="none"
+//               stroke={isActive ? "#059669" : "#d1fae5"}
+//               strokeWidth={isActive ? 2 : 1.5}
+//               style={{ transition: "stroke .3s" }}
+//             />
+//             {/* Inner fill */}
+//             <circle
+//               cx={cx} cy={cy} r="12"
+//               fill={isActive ? "#ecfdf5" : "#fff"}
+//               stroke={isActive ? "#059669" : "#a7f3d0"}
+//               strokeWidth="1"
+//               style={{ transition: "fill .3s, stroke .3s" }}
+//             />
+//             {/* Core dot */}
+//             <circle
+//               cx={cx} cy={cy} r={isActive ? 6 : 5}
+//               fill={isActive ? "#065f46" : "#d1fae5"}
+//               style={{ transition: "fill .3s, r .2s" }}
+//             />
+//             {/* Label */}
+//             <text
+//               x={lx} y={ly}
+//               textAnchor={anchor} dominantBaseline="middle"
+//               fontFamily="'DM Sans', sans-serif"
+//               fontSize="11"
+//               fontWeight={isActive ? "500" : "400"}
+//               fill={isActive ? "#065f46" : "#6b7280"}
+//               style={{ transition: "fill .3s, font-weight .2s", pointerEvents: "none" }}
+//             >
+//               {f.title}
+//             </text>
+//             {/* Badge label */}
+//             {f.badge && (
+//               <text
+//                 x={lx} y={ly + 13}
+//                 textAnchor={anchor} dominantBaseline="middle"
+//                 fontFamily="'DM Sans', sans-serif"
+//                 fontSize="9" fontWeight="600"
+//                 fill="#059669"
+//                 style={{ pointerEvents: "none" }}
+//               >
+//                 {f.badge === "Popular" ? "★ popular" : f.badge === "AI" ? "✦ AI" : "● new"}
+//               </text>
+//             )}
+//           </g>
+//         );
+//       })}
+
+//       {/* Root label */}
+//       <text
+//         x="360" y="540"
+//         textAnchor="middle"
+//         fontFamily="'DM Sans', sans-serif"
+//         fontSize="11"
+//         fill="#059669"
+//         opacity=".6"
+//         fontStyle="italic"
+//       >
+//         Platform core
+//       </text>
+//     </svg>
+//   );
+// }
+
+// // ─── Section ──────────────────────────────────────────────────────────────────
+// export default function FeaturesTreeSection() {
+//   const [active, setActive] = useState(null);
+
+//   const handleSelect = useCallback((i) => {
+//     setActive((prev) => (prev === i ? null : i));
+//   }, []);
+
+//   return (
+//     <section
+//       id="features"
+//       className="py-20 sm:py-28 bg-white relative overflow-hidden"
+//     >
+//       {/* Soft bg */}
+//       <div className="absolute inset-0 bg-gradient-to-b from-white via-green-50/20 to-white pointer-events-none" />
 
 //       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+
 //         {/* Header */}
-//         <div className="text-center mb-16 space-y-4">
-//           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#111914] border border-[#1E2B22] text-sm text-[#00D46A] font-medium">
-//             <Sparkles className="w-3.5 h-3.5" />
-//             Everything you need
+//         <div className="text-center space-y-2">
+//           <div className="flex items-center justify-center gap-3 text-xs font-medium tracking-widest text-green-600 uppercase">
+//             <span className="w-8 h-px bg-green-400 inline-block" />
+//             Platform features
+//             <span className="w-8 h-px bg-green-400 inline-block" />
 //           </div>
 //           <h2
-//             className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white"
-//             style={{ fontFamily: "Outfit, sans-serif" }}
+//             className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-[1.08] tracking-tight"
+//             style={{ fontFamily: "sans-serif" }}
 //           >
-//             Powerful Features for
+//             One platform.
 //             <br />
-//             <span className="gradient-text">Modern Businesses</span>
+//             <span className="bg-gradient-to-r from-green-600 via-teal-500 to-green-600 bg-clip-text text-transparent">
+//               Infinite possibilities.
+//             </span>
 //           </h2>
-//           <p className="text-[#6B8070] text-lg max-w-xl mx-auto">
-//             Everything you need to run WhatsApp marketing campaigns, support operations,
-//             and grow your business — in one unified platform.
+//           <p className="text-gray-400 text-sm sm:text-base max-w-sm mx-auto leading-relaxed mb-0">
+//             Click any node on the tree to explore each feature.
 //           </p>
 //         </div>
 
-//         {/* Grid */}
-//         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-//           {features.map((feat, i) => (
-//             <div
-//               key={i}
-//               className="feature-card glass-card rounded-2xl p-6 border border-[#1E2B22] relative overflow-hidden group"
-//             >
-//               {/* Glow on hover */}
-//               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#00D46A]/0 to-transparent group-hover:via-[#00D46A]/50 transition-all duration-500" />
+//         {/* Tree */}
+//        <div className="-mt-32 sm:-mt-40">
+//           <FeatureTree active={active} onSelect={handleSelect} />
+//         </div>
 
-//               <div className="flex items-start justify-between mb-4">
-//                 <div className="w-11 h-11 rounded-xl bg-[#00D46A]/10 border border-[#00D46A]/20 flex items-center justify-center group-hover:bg-[#00D46A]/20 transition-colors">
-//                   <feat.icon className="w-5 h-5 text-[#00D46A]" />
-//                 </div>
-//                 {feat.badge && (
-//                   <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${badgeColors[feat.badge]}`}>
-//                     {feat.badge}
-//                   </span>
-//                 )}
-//               </div>
-//               <h3
-//                 className="text-white font-semibold text-base mb-2"
-//                 style={{ fontFamily: "Outfit, sans-serif" }}
+//         {/* Detail card */}
+//         {active !== null && (
+//           <DetailCard
+//             key={active}
+//             feature={features[active]}
+//             onClose={() => setActive(null)}
+//           />
+//         )}
+
+//         {/* Stats */}
+//         {/* <div className="flex justify-center gap-10 sm:gap-16 mt-10 pt-8 border-t border-green-100">
+//           {[["12", "Features"], ["5K+", "Businesses"], ["24/7", "Uptime"], ["∞", "Scale"]].map(([n, l]) => (
+//             <div key={l} className="text-center">
+//               <div
+//                 className="text-2xl sm:text-3xl font-extrabold text-green-600"
+//                 style={{ fontFamily: "'Syne', sans-serif" }}
 //               >
-//                 {feat.title}
-//               </h3>
-//               <p className="text-[#6B8070] text-sm leading-relaxed">{feat.desc}</p>
+//                 {n}
+//               </div>
+//               <div className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">{l}</div>
 //             </div>
 //           ))}
-//         </div>
+//         </div> */}
 //       </div>
+
+//       {/* Keyframes */}
+//       <style jsx global>{`
+//         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+//         @keyframes breathe {
+//           0%, 100% { stroke-opacity: .4; }
+//           50%       { stroke-opacity: 1; }
+//         }
+//         @keyframes nodeRing {
+//           0%   { r: 14px; opacity: .7; }
+//           100% { r: 28px; opacity: 0; }
+//         }
+//         @keyframes slideUp {
+//           to { opacity: 1; transform: translateY(0); }
+//         }
+//       `}</style>
 //     </section>
 //   );
 // }
+
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import {
   UserPlus, MessageCircle, QrCode, Bot, Layout, GitBranch,
   Plug2, BarChart2, Users2, Megaphone, Sparkles, FileText,
 } from "lucide-react";
- 
-const features = [
-  {
-    icon: UserPlus,
-    title: "Embedded Signup",
-    desc: "Integrated Embedded Signup System that makes customer onboarding seamless and fast.",
-    badge: "Popular",
-    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&h=300&fit=crop&auto=format",
-  },
-  {
-    icon: MessageCircle,
-    title: "Integrated WhatsApp Chat",
-    desc: "Seamlessly connect with customers through a unified WhatsApp Chat inbox.",
-    image: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=600&h=300&fit=crop&auto=format",
-  },
-  {
-  icon: QrCode,
-  title: "QR Code Generator",
-  desc: "Instantly generate QR codes for your WhatsApp number to drive offline engagement.",
-  image: "https://images.pexels.com/photos/6804581/pexels-photo-6804581.jpeg?auto=compress&cs=tinysrgb&w=600",
-},
-  {
-  icon: Bot,
-  title: "Chat-Bot",
-  desc: "Engage customers 24/7 with intelligent, rule-based chatbot responses effortlessly.",
-  image: "https://images.pexels.com/photos/8386434/pexels-photo-8386434.jpeg?auto=compress&cs=tinysrgb&w=600",
-},
-  {
-    icon: Layout,
-    title: "Manage Templates",
-    desc: "Create and manage message templates directly in-app without visiting Meta Business Manager.",
-    badge: "New",
-    image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&h=300&fit=crop&auto=format",
-  },
-  {
-    icon: GitBranch,
-    title: "Flow Maker",
-    desc: "Build complex bot conversation flows visually with our advanced no-code Flow Maker.",
-    image: "https://images.unsplash.com/photo-1545987796-200677ee1011?w=600&h=300&fit=crop&auto=format",
-  },
-  {
-    icon: Plug2,
-    title: "API Integration",
-    desc: "Full REST APIs and webhooks enable smooth integration with any third-party service.",
-    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=300&fit=crop&auto=format",
-  },
-  {
-    icon: BarChart2,
-    title: "Live Analysis",
-    desc: "Get real-time analytics and delivery status of your campaigns and messages.",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=300&fit=crop&auto=format",
-  },
-  {
-    icon: Users2,
-    title: "Assign Agents",
-    desc: "Distribute chats to team members and agents with role-based access control.",
-    image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&h=300&fit=crop&auto=format",
-  },
-  {
-    icon: Megaphone,
-    title: "Campaigns",
-    desc: "Effortlessly schedule and manage broadcast campaigns to thousands of contacts.",
-    image: "https://images.unsplash.com/photo-1533750349088-cd871a92f312?w=600&h=300&fit=crop&auto=format",
-  },
-  {
-    icon: Sparkles,
-    title: "AI Chatbot",
-    desc: "Leverage advanced AI to automate customer interactions with intelligent, contextual responses.",
-    badge: "AI",
-    image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&h=300&fit=crop&auto=format",
-  },
-  {
-    icon: FileText,
-    title: "Chat Reports",
-    desc: "Generate comprehensive analytics and detailed reports on all WhatsApp communications.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=300&fit=crop&auto=format",
-  },
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
+const FEATURES = [
+  { Icon: UserPlus,      title: "Embedded Signup",    desc: "Integrated Embedded Signup System that makes customer onboarding seamless and fast. Reduce drop-offs and get users verified in seconds.",                                               badge: "Popular", tag: "Used by 80% of teams"  },
+  { Icon: MessageCircle, title: "WhatsApp Chat",       desc: "Seamlessly connect with customers through a unified WhatsApp Chat inbox. Handle multiple conversations simultaneously with smart routing.",                                              tag: "Real-time messaging"     },
+  { Icon: QrCode,        title: "QR Code Generator",  desc: "Instantly generate QR codes for your WhatsApp number to drive offline-to-online engagement at stores, events, and print materials.",                                                    tag: "Offline + online"        },
+  { Icon: Bot,           title: "Chat-Bot",            desc: "Engage customers 24/7 with intelligent, rule-based chatbot responses. Handle FAQs, lead capture, and support without human intervention.",                                              tag: "Always on"               },
+  { Icon: Layout,        title: "Manage Templates",    desc: "Create and manage message templates directly in-app without visiting Meta Business Manager. Get approvals faster with guided workflows.",                        badge: "New",     tag: "Meta-approved"           },
+  { Icon: GitBranch,     title: "Flow Maker",          desc: "Build complex bot conversation flows visually with our advanced no-code Flow Maker. Drag, connect, and publish in minutes.",                                                            tag: "No-code builder"         },
+  { Icon: Plug2,         title: "API Integration",     desc: "Full REST APIs and webhooks enable smooth integration with any third-party service — CRMs, ERPs, ecommerce platforms, and more.",                                                      tag: "100+ integrations"       },
+  { Icon: BarChart2,     title: "Live Analysis",       desc: "Get real-time analytics and delivery status of your campaigns and messages. Track open rates, CTRs, and response times live.",                                                          tag: "Live data"               },
+  { Icon: Users2,        title: "Assign Agents",       desc: "Distribute chats to team members and agents with role-based access control. Set SLAs, monitor workload, and reassign in one click.",                                                   tag: "Team management"         },
+  { Icon: Megaphone,     title: "Campaigns",           desc: "Effortlessly schedule and manage broadcast campaigns to thousands of contacts. Segment, personalise, and A/B test at scale.",                                                           tag: "Bulk messaging"          },
+  { Icon: Sparkles,      title: "AI Chatbot",          desc: "Leverage advanced AI to automate customer interactions with intelligent, contextual responses. Learns from conversation history.",                               badge: "AI",      tag: "Powered by AI"           },
+  { Icon: FileText,      title: "Chat Reports",        desc: "Generate comprehensive analytics and detailed reports on all WhatsApp communications. Export to CSV, PDF, or push to your BI tool.",                                                   tag: "Full analytics"          },
 ];
- 
-const badgeColors: Record<string, string> = {
-  Popular: "bg-gradient-to-r from-green-100 to-teal-100 text-green-800 border border-green-200",
-  New:     "bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-800 border border-blue-200",
-  AI:      "bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 border border-purple-200",
+
+// Hub centre in SVG coordinates
+const HUB = { x: 360, y: 268 };
+
+// [cx, cy, labelAnchor, lx, ly]
+const NODE_POS = [
+  [158, 148, "end",   136, 148], // 0 L
+  [130, 200, "end",   108, 200], // 1 L
+  [202, 178, "end",   180, 178], // 2 L
+  [228, 224, "end",   206, 224], // 3 L
+  [210, 278, "end",   188, 278], // 4 L
+  [155, 315, "end",   133, 315], // 5 L
+  [562, 148, "start", 584, 148], // 6 R
+  [590, 200, "start", 612, 200], // 7 R
+  [518, 178, "start", 540, 178], // 8 R
+  [492, 224, "start", 514, 224], // 9 R
+  [510, 278, "start", 532, 278], // 10 R
+  [565, 315, "start", 587, 315], // 11 R
+];
+
+const BRANCH_D = [
+  `M${HUB.x},${HUB.y} Q272,202 158,148`,
+  `M${HUB.x},${HUB.y} Q252,232 130,200`,
+  `M${HUB.x},${HUB.y} Q290,218 202,178`,
+  `M${HUB.x},${HUB.y} Q298,244 228,224`,
+  `M${HUB.x},${HUB.y} Q292,272 210,278`,
+  `M${HUB.x},${HUB.y} Q264,288 155,315`,
+  `M${HUB.x},${HUB.y} Q448,202 562,148`,
+  `M${HUB.x},${HUB.y} Q468,232 590,200`,
+  `M${HUB.x},${HUB.y} Q430,218 518,178`,
+  `M${HUB.x},${HUB.y} Q422,244 492,224`,
+  `M${HUB.x},${HUB.y} Q428,272 510,278`,
+  `M${HUB.x},${HUB.y} Q456,288 565,315`,
+];
+
+const BADGE_CLS = {
+  Popular: "bg-green-100 text-green-800 border border-green-200",
+  New:     "bg-blue-100  text-blue-800  border border-blue-200",
+  AI:      "bg-purple-100 text-purple-800 border border-purple-200",
 };
- 
-export default function FeaturesSection() {
-  const sectionRef = useRef<HTMLElement>(null);
- 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("animate-fade-up");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
- 
-    const cards = document.querySelectorAll(".feature-card-light");
-    cards.forEach((card) => observer.observe(card));
- 
-    return () => observer.disconnect();
-  }, []);
- 
+
+// ─── PulseDot ──────────────────────────────────────────────────────────────────
+function PulseDot() {
   return (
-<section id="features" className="py-24 relative bg-white" ref={sectionRef}>
-<div className="absolute inset-0 bg-gradient-to-b from-white via-green-50/30 to-white pointer-events-none" />
- 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+    <span className="relative inline-flex w-2 h-2 mr-2 flex-shrink-0 mt-0.5">
+      <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping" />
+      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-600" />
+    </span>
+  );
+}
+
+// ─── DetailCard ────────────────────────────────────────────────────────────────
+function DetailCard({ feature, onClose }) {
+  const { Icon, title, desc, badge, tag } = feature;
+  return (
+    <div className="mt-5 flex items-start gap-4 bg-white border border-green-200 rounded-2xl p-5
+                    shadow-md shadow-green-100/40
+                    animate-[slideUp_.32s_cubic-bezier(.2,.8,.3,1)_forwards]
+                    opacity-0 translate-y-3">
+      <div className="w-12 h-12 rounded-2xl bg-green-50 border border-green-200
+                      flex items-center justify-center flex-shrink-0 text-green-600">
+        <Icon className="w-6 h-6" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex flex-wrap items-center gap-2 mb-1.5">
+          <h3 className="text-base font-extrabold text-gray-900" style={{ fontFamily: "'Syne',sans-serif" }}>
+            {title}
+          </h3>
+          {badge && (
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide ${BADGE_CLS[badge]}`}>
+              {badge}
+            </span>
+          )}
+        </div>
+        <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
+        <div className="inline-flex items-center gap-1 mt-3 text-xs text-green-700 font-medium
+                        bg-green-50 border border-green-200 rounded-full px-3 py-1">
+          <PulseDot />
+          {tag}
+        </div>
+      </div>
+      <button
+        onClick={onClose}
+        aria-label="Close detail"
+        className="flex-shrink-0 mt-0.5 text-gray-300 hover:text-gray-500 transition-colors"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+// ─── FeatureTree (SVG layer) ───────────────────────────────────────────────────
+function FeatureTree({ active, onSelect }) {
+  const svgRef       = useRef(null);
+  const pathRefs     = useRef([]);
+  const travRefs     = useRef([]);
+  const waveTimer    = useRef(null);
+  const travelTimers = useRef([]);
+
+  // ── 1. Branch draw-in on mount ──────────────────────────────────────────────
+  useEffect(() => {
+    const paths = pathRefs.current;
+    paths.forEach((p, i) => {
+      if (!p) return;
+      const len = p.getTotalLength ? p.getTotalLength() : 280;
+      p.style.strokeDasharray  = `${len}`;
+      p.style.strokeDashoffset = `${len}`;
+      const tid = setTimeout(() => {
+        p.style.transition       = "stroke-dashoffset .75s ease, stroke .35s, stroke-width .35s";
+        p.style.strokeDashoffset = "0";
+      }, 220 + i * 72);
+      travelTimers.current.push(tid);
+    });
+    return () => travelTimers.current.forEach(clearTimeout);
+  }, []);
+
+  // ── 2. Continuous signal wave ───────────────────────────────────────────────
+  const fireWave = useCallback(() => {
+    travRefs.current.forEach((c, i) => {
+      if (!c) return;
+      const tid = setTimeout(() => {
+        // reset
+        c.style.transition     = "none";
+        c.style.offsetDistance = "0%";
+        c.style.opacity        = "0";
+        // trigger reflow
+        void c.getBoundingClientRect();
+        // animate
+        c.style.transition     = "offset-distance 1.1s cubic-bezier(.4,0,.6,1), opacity .12s ease";
+        c.style.opacity        = "1";
+        c.style.offsetDistance = "100%";
+        const hide = setTimeout(() => { if (c) c.style.opacity = "0"; }, 1050);
+        travelTimers.current.push(hide);
+      }, i * 105);
+      travelTimers.current.push(tid);
+    });
+  }, []);
+
+  useEffect(() => {
+    // delay first wave until branches finish drawing
+    const init = setTimeout(() => {
+      fireWave();
+      waveTimer.current = setInterval(fireWave, 3400);
+    }, 1200);
+    return () => {
+      clearTimeout(init);
+      clearInterval(waveTimer.current);
+      travelTimers.current.forEach(clearTimeout);
+    };
+  }, [fireWave]);
+
+  // ── 3. Branch colour when active changes ────────────────────────────────────
+  useEffect(() => {
+    pathRefs.current.forEach((p, i) => {
+      if (!p) return;
+      if (active === null) {
+        p.setAttribute("stroke", "#a7f3d0");
+        p.setAttribute("stroke-width", "1.5");
+      } else if (active === i) {
+        p.setAttribute("stroke", "#059669");
+        p.setAttribute("stroke-width", "2.5");
+      } else {
+        p.setAttribute("stroke", "#e5e7eb");
+        p.setAttribute("stroke-width", "1.5");
+      }
+    });
+  }, [active]);
+
+  return (
+    <svg
+      ref={svgRef}
+      viewBox="0 0 720 460"
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-full h-auto overflow-visible"
+      aria-hidden="true"
+    >
+      <defs>
+        {/* path definitions for offset-path travel */}
+        {BRANCH_D.map((d, i) => (
+          <path key={i} id={`bp${i}`} d={d} />
+        ))}
+      </defs>
+
+      {/* Trunk */}
+      <line
+        x1={HUB.x} y1="440" x2={HUB.x} y2={HUB.y}
+        stroke="#d1fae5" strokeWidth="2" strokeLinecap="round"
+        style={{ animation: "breathe 3s ease infinite" }}
+      />
+
+      {/* Branches */}
+      {BRANCH_D.map((d, i) => (
+        <path
+          key={i}
+          ref={el => (pathRefs.current[i] = el)}
+          d={d}
+          fill="none"
+          strokeLinecap="round"
+          stroke="#a7f3d0"
+          strokeWidth="1.5"
+        />
+      ))}
+
+      {/* Travelling signal dots — one per branch */}
+      {BRANCH_D.map((d, i) => (
+        <circle
+          key={i}
+          ref={el => (travRefs.current[i] = el)}
+          r="3.5"
+          fill="#059669"
+          opacity="0"
+          style={{
+            offsetPath:     `path('${d}')`,
+            offsetDistance: "0%",
+            offsetRotate:   "0deg",
+          }}
+        />
+      ))}
+
+      {/* Hub glow ring */}
+      <circle
+        cx={HUB.x} cy={HUB.y} r="36"
+        fill="none" stroke="#059669" strokeWidth="1"
+        style={{ animation: "hubPulse 2.6s ease infinite" }}
+      />
+      {/* Hub */}
+      <circle cx={HUB.x} cy={HUB.y} r="30" fill="#ecfdf5" stroke="#059669" strokeWidth="2" />
+      <circle cx={HUB.x} cy={HUB.y} r="19" fill="#059669" />
+      <text x={HUB.x} y={HUB.y - 4} textAnchor="middle" dominantBaseline="middle"
+        fontFamily="'Syne',sans-serif" fontSize="7.5" fontWeight="700"
+        fill="#fff" letterSpacing=".07em">WHATS</text>
+      <text x={HUB.x} y={HUB.y + 6} textAnchor="middle" dominantBaseline="middle"
+        fontFamily="'Syne',sans-serif" fontSize="7.5" fontWeight="700"
+        fill="#fff" letterSpacing=".07em">APP</text>
+
+      {/* Nodes */}
+      {NODE_POS.map(([cx, cy, anchor, lx, ly], i) => {
+        const isActive = active === i;
+        const isDim    = active !== null && !isActive;
+        const f        = FEATURES[i];
+        return (
+          <g
+            key={i}
+            onClick={() => onSelect(i)}
+            style={{
+              cursor: "pointer",
+              opacity: isDim ? 0.28 : 1,
+              transition: "opacity .3s",
+              animation: `nodeIn .5s ease ${0.3 + i * 0.06}s both`,
+            }}
+          >
+            {/* Pulse ring */}
+            {isActive && (
+              <circle
+                cx={cx} cy={cy} r="14"
+                fill="none" stroke="#059669" strokeWidth="1.5"
+                style={{ animation: "ring 1.8s ease-out infinite" }}
+              />
+            )}
+            {/* Outer */}
+            <circle cx={cx} cy={cy} r="16"
+              fill="none"
+              stroke={isActive ? "#059669" : "#d1fae5"}
+              strokeWidth={isActive ? 2 : 1.5}
+              style={{ transition: "stroke .3s" }}
+            />
+            {/* Inner */}
+            <circle cx={cx} cy={cy} r="11"
+              fill={isActive ? "#ecfdf5" : "#fff"}
+              stroke={isActive ? "#059669" : "#a7f3d0"}
+              strokeWidth="1"
+              style={{ transition: "fill .3s, stroke .3s" }}
+            />
+            {/* Core */}
+            <circle cx={cx} cy={cy} r={isActive ? 6 : 5}
+              fill={isActive ? "#065f46" : "#d1fae5"}
+              style={{ transition: "fill .3s" }}
+            />
+            {/* Label */}
+            <text
+              x={lx} y={ly}
+              textAnchor={anchor} dominantBaseline="middle"
+              fontFamily="'DM Sans',sans-serif"
+              fontSize="10.5"
+              fontWeight={isActive ? "500" : "400"}
+              fill={isActive ? "#065f46" : "#6b7280"}
+              style={{ pointerEvents: "none", transition: "fill .3s" }}
+            >
+              {f.title}
+            </text>
+            {/* Badge micro-label */}
+            {f.badge && (
+              <text
+                x={lx} y={ly + 13}
+                textAnchor={anchor} dominantBaseline="middle"
+                fontFamily="'DM Sans',sans-serif"
+                fontSize="9" fontWeight="600" fill="#059669"
+                style={{ pointerEvents: "none" }}
+              >
+                {f.badge === "Popular" ? "★ popular" : f.badge === "AI" ? "✦ AI" : "● new"}
+              </text>
+            )}
+          </g>
+        );
+      })}
+
+      {/* Root label */}
+      <text
+        x={HUB.x} y="458"
+        textAnchor="middle"
+        fontFamily="'DM Sans',sans-serif"
+        fontSize="11" fill="#059669" opacity=".6" fontStyle="italic"
+      >
+        Platform core
+      </text>
+    </svg>
+  );
+}
+
+// ─── Section ───────────────────────────────────────────────────────────────────
+export default function FeaturesTreeSection() {
+  const [active, setActive] = useState(null);
+  const toggle = useCallback((i) => setActive(p => p === i ? null : i), []);
+
+  return (
+    <section
+      id="features"
+      className="py-16 sm:py-24 bg-white relative overflow-hidden"
+    >
+      {/* Soft radial bg */}
+      <div className="pointer-events-none absolute inset-0"
+           style={{ background: "radial-gradient(ellipse 65% 45% at 50% 58%, rgba(5,150,105,.05), transparent)" }} />
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
         {/* Header */}
-<div className="text-center mb-16 space-y-4">
-<div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-green-50 to-teal-50 border border-green-200 text-sm font-medium">
-<Sparkles className="w-3.5 h-3.5 text-green-600" />
-<span className="bg-gradient-to-r from-green-700 to-teal-700 bg-clip-text text-transparent">
-              Everything you need
-</span>
-</div>
-<h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900"
-            style={{ fontFamily: "Outfit, sans-serif" }}
->
-            Powerful Features for
-<br />
-<span className="bg-gradient-to-r from-green-600 via-teal-600 to-green-600 bg-clip-text text-transparent animate-gradient">
-              Modern Businesses
-</span>
-</h2>
-<p className="text-gray-500 text-lg max-w-xl mx-auto">
-            Everything you need to run WhatsApp marketing campaigns, support operations,
-            and grow your business — in one unified platform.
-</p>
-</div>
- 
-        {/* Hero Banner */}
-<div className="relative w-full h-64 sm:h-80 rounded-3xl overflow-hidden mb-12 shadow-lg">
-<img
-            src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1400&h=500&fit=crop&auto=format"
-            alt="WhatsApp Business Platform"
-            className="w-full h-full object-cover"
+        <div className="text-center mb-2 space-y-2">
+          <div className="flex items-center justify-center gap-3 text-[10px] font-medium tracking-[.14em] text-green-600 uppercase">
+            <span className="w-6 h-px bg-green-400" />
+            Platform features
+            <span className="w-6 h-px bg-green-400" />
+          </div>
+          <h2
+            className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900
+                       leading-[1.08] tracking-tight"
+           style={{ fontFamily: "sans-serif" }}
+          >
+            One platform.
+            <br />
+            <span className="bg-gradient-to-r from-green-600 via-teal-500 to-green-600 bg-clip-text text-transparent">
+              Infinite possibilities.
+            </span>
+          </h2>
+          <p className="text-gray-400 text-sm sm:text-base max-w-xs mx-auto leading-relaxed">
+            Click any node to explore each feature.
+          </p>
+        </div>
+
+        {/* Tree — negative top margin pulls it up to reduce dead space */}
+        <div className="-mt-6 sm:-mt-10">
+          <FeatureTree active={active} onSelect={toggle} />
+        </div>
+
+        {/* Detail card */}
+        {active !== null && (
+          <DetailCard
+            key={active}
+            feature={FEATURES[active]}
+            onClose={() => setActive(null)}
           />
-<div className="absolute inset-0 bg-gradient-to-r from-green-900/70 via-teal-800/50 to-transparent flex flex-col justify-center px-8 sm:px-12">
-<p className="text-green-300 text-sm font-semibold uppercase tracking-widest mb-2">
-              All-in-One Platform
-</p>
-<h3
-              className="text-white text-2xl sm:text-3xl font-bold max-w-md leading-snug"
-              style={{ fontFamily: "Outfit, sans-serif" }}
->
-              Connect, Engage & Grow on WhatsApp
-</h3>
-<p className="text-green-100/80 text-sm mt-2 max-w-sm">
-              Trusted by 5,000+ businesses to power their WhatsApp communications.
-</p>
-</div>
-</div>
- 
-        {/* Feature Cards Grid */}
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {features.map((feat, i) => (
-<div
-              key={i}
-              className="feature-card-light bg-white rounded-2xl border border-gray-100 relative overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
-              style={{ animationDelay: `${i * 0.05}s` }}
->
-              {/* Top gradient bar on hover */}
-<div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-400 via-teal-400 to-green-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
- 
-              {/* Image */}
-<div className="relative w-full h-40 overflow-hidden flex-shrink-0 bg-gradient-to-br from-green-50 to-teal-50">
-<img
-                  src={feat.image}
-                  alt={feat.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
-                />
-<div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-green-950/20" />
-</div>
- 
-              {/* Card Body */}
-<div className="p-6 relative flex flex-col flex-1">
-<div className="absolute inset-0 bg-gradient-to-br from-green-50/0 to-teal-50/0 group-hover:from-green-50/20 group-hover:to-teal-50/20 transition-all duration-500 pointer-events-none" />
- 
-                <div className="flex items-start justify-between mb-4">
-<div className="w-11 h-11 rounded-xl bg-gradient-to-br from-green-50 to-teal-50 border border-green-200 flex items-center justify-center group-hover:from-green-100 group-hover:to-teal-100 transition-all duration-300">
-<feat.icon className="w-5 h-5 text-green-600" />
-</div>
-                  {feat.badge && (
-<span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${badgeColors[feat.badge]}`}>
-                      {feat.badge}
-</span>
-                  )}
-</div>
- 
-                <h3
-                  className="text-gray-900 font-semibold text-base mb-2"
-                  style={{ fontFamily: "Outfit, sans-serif" }}
->
-                  {feat.title}
-</h3>
-<p className="text-gray-500 text-sm leading-relaxed">{feat.desc}</p>
- 
-                <div className="absolute bottom-3 right-3 w-2 h-2 rounded-full bg-gradient-to-r from-green-400 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-</div>
-</div>
-          ))}
-</div>
-</div>
- 
-      <style jsx>{`
-        .feature-card-light {
-          opacity: 0;
-          transform: translateY(20px);
-          animation-fill-mode: forwards;
+        )}
+      </div>
+
+      {/* ── Keyframes ── */}
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+        @keyframes breathe {
+          0%, 100% { stroke-opacity: .35; }
+          50%       { stroke-opacity: 1;  }
         }
-        .animate-fade-up {
-          animation: fadeUp 0.6s ease forwards;
+        @keyframes hubPulse {
+          0%, 100% { r: 36; opacity: .45; }
+          50%       { r: 42; opacity: 0;  }
         }
-        @keyframes fadeUp {
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+        @keyframes ring {
+          0%   { r: 14; opacity: .75; stroke-width: 1.5; }
+          100% { r: 32; opacity: 0;   stroke-width: .5;  }
         }
-        .animate-gradient {
-          background-size: 200% auto;
-          animation: gradientShift 3s ease infinite;
+        @keyframes nodeIn {
+          from { opacity: 0; transform: scale(.35); }
+          to   { opacity: 1; transform: scale(1);   }
         }
-        @keyframes gradientShift {
-          0% { background-position: 0% center; }
-          50% { background-position: 100% center; }
-          100% { background-position: 0% center; }
+        @keyframes slideUp {
+          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
-</section>
+    </section>
   );
 }

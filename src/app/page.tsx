@@ -12,15 +12,15 @@ import TickerSection from "@/components/sections/TickerSection";
 export default function Home() {
   return (
     <main className="relative min-h-screen bg-[#0A0F0D]">
-      <Navbar />  {/* done */}
-      <HeroSection /> {/* done */}
-      <TickerSection /> {/* done */}
-      <StatsSection /> {/* done */}
-      <FeaturesSection /> {/* done */}
-      <ApiSection /> {/* done */}
-      <PricingSection /> {/* done */}
-      <FaqSection /> {/* done */}
-      <ContactSection /> {/* done */}
+      <Navbar />
+      <HeroSection />
+      <TickerSection />
+      <StatsSection />
+      <FeaturesSection />
+      <ApiSection />
+      <PricingSection />
+      <FaqSection />
+      <ContactSection />
       <Footer />
     </main>
   );
